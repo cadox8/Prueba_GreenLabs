@@ -2,7 +2,6 @@ package me.cadox8.prueba.gui;
 
 import me.cadox8.prueba.utils.Utils;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class MenuItems {
 
-    public List<ItemStack> getItemsPerPage(Player p, int page, int tot) {
+    public List<ItemStack> getItemsPerPage(int page, int tot) {
         List<ItemStack> items = new ArrayList<>();
         List<String> lore = new ArrayList<>();
         int min = 46;
@@ -25,7 +24,7 @@ public class MenuItems {
                 if (x > tot) break;
 
                 lore.add(x + "");
-                items.add(Utils.createSkull(p.getUniqueId().toString(), lore));
+                items.add(Utils.createSkull("", lore));
                 lore.remove(2);
             }
         }
@@ -35,7 +34,7 @@ public class MenuItems {
                 if (x > tot) break;
 
                 lore.add(x + "");
-                items.add(Utils.createSkull(p.getUniqueId().toString(), lore));
+                items.add(Utils.createSkull("", lore));
                 lore.remove(2);
             }
         }

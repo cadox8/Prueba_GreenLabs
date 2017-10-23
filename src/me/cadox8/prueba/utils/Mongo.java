@@ -1,7 +1,11 @@
 package me.cadox8.prueba.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.*;
+import com.mongodb.util.JSON;
 import lombok.Getter;
+import me.cadox8.prueba.api.User;
 import me.cadox8.prueba.exc.NoCollectionException;
 import me.cadox8.prueba.exc.NoDocumentException;
 
@@ -19,7 +23,9 @@ public class Mongo {
     @Getter private char[] pass;
     @Getter private String DB_Name;
 
-    private boolean auth;
+    private boolean auth = true;
+
+    private Gson gson = new GsonBuilder().create();
 
     public Mongo(String host, int port, String DB_Name) {
         this(host, port, null, null, DB_Name);
@@ -56,27 +62,27 @@ public class Mongo {
     // Metodos
     // Usando UUID
 
-    public List<DBCursor> getAllDocuments(String collection) throws NoCollectionException {
+    public List<User> getAllDocuments(String collection) throws NoCollectionException {
         if (getCollection(collection) == null) throw new NoCollectionException(collection);
-        List<DBCursor> documents = new ArrayList<>();
-
+        List<User> users = new ArrayList<>();
         DBCursor cursor = getCollection(collection).find();
+
         try {
-            while(cursor.hasNext()) documents.add(cursor);
+            //ToDo: Cambiar JSON a GSON para que no esté deprecated
+            while(cursor.hasNext()) users.add(gson.fromJson(JSON.serialize(cursor), User.class));
         } finally {
             cursor.close();
         }
-        return documents;
+        return users;
     }
 
-    public DBCursor getDocument(String collection, String uuid) throws NoDocumentException, NoCollectionException {
+    public User getDocument(String collection, String uuid) throws NoDocumentException, NoCollectionException {
         if (getCollection(collection) == null) throw new NoCollectionException(collection);
-
         BasicDBObject query = new BasicDBObject("UUID", uuid);
         DBCursor cursor = getCollection(collection).find(query);
 
         try {
-            while(cursor.hasNext()) return cursor;
+            while(cursor.hasNext()) return gson.fromJson(JSON.serialize(cursor), User.class);
         } finally {
             cursor.close();
         }
@@ -85,7 +91,6 @@ public class Mongo {
 
     public boolean updateDocument(String uuid, String collection , PunishLevel pl) throws NoCollectionException {
         if (getCollection(collection) == null) throw new NoCollectionException(collection);
-
         int level = pl.getLevel() > PunishLevel.BANEADO.getLevel() ? PunishLevel.BANEADO.getLevel() : pl.getLevel();
         BasicDBObject query = new BasicDBObject().append("UUID", uuid);
         BasicDBObject newLevel = new BasicDBObject();

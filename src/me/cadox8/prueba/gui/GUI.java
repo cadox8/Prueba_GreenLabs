@@ -30,7 +30,7 @@ public class GUI {
         } catch (NoCollectionException e) {
             e.printStackTrace();
         }
-        List<ItemStack> items = mi.getItemsPerPage(p, page, tot);
+        List<ItemStack> items = mi.getItemsPerPage(page, tot);
 
         if(items.isEmpty()){
             p.sendMessage(Prueba.getPrefix() + ChatColor.RED + "No hay sanciones");
@@ -45,7 +45,7 @@ public class GUI {
             if(Math.round(tot / 45) >= page) inv.setItem(50, getNextItem());
             inv.setItem(47, getPrevItem());
         }
-
+        p.closeInventory();
         p.openInventory(inv);
     }
 
