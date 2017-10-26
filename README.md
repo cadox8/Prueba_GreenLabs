@@ -1,6 +1,6 @@
 # Prueba GreenLabs
 
-###Información
+### Información
 
 Toda la información obtenida para hacer el plugin (documentación de MongoDB)
  ha sido sacada de [mongodb.github.io](http://mongodb.github.io/mongo-java-driver/2.13/getting-started/quick-tour/)
