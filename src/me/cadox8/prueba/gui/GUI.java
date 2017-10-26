@@ -1,8 +1,6 @@
 package me.cadox8.prueba.gui;
 
 import me.cadox8.prueba.Prueba;
-import me.cadox8.prueba.exc.NoCollectionException;
-import me.cadox8.prueba.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,24 +13,16 @@ import java.util.List;
 
 public class GUI {
 
-    private Prueba plugin = Prueba.getInstance();
+    private final Prueba plugin = Prueba.getInstance();
 
     public static HashMap<Player, Integer> playerPage = new HashMap<>();
 
-    private MenuItems mi = new MenuItems();
-
     public void openGUI(Player p, int page){
-        Inventory inv = plugin.getServer().createInventory(null, 54, Utils.colorize("&cSanciones"));
-        int tot = 0;
+        Inventory inv = plugin.getServer().createInventory(null, 54, "Sanciones");
+        int tot = Prueba.getUsers().size();
+        List<ItemStack> items = new MenuItems().getItemsPerPage(page);
 
-        try {
-            tot = plugin.getMongo().getAllDocuments("punish").size();
-        } catch (NoCollectionException e) {
-            e.printStackTrace();
-        }
-        List<ItemStack> items = mi.getItemsPerPage(page, tot);
-
-        if(items.isEmpty()){
+        if(items.isEmpty() || items == null){
             p.sendMessage(Prueba.getPrefix() + ChatColor.RED + "No hay sanciones");
             return;
         }

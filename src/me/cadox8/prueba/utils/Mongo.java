@@ -54,7 +54,7 @@ public class Mongo {
         return database;
     }
 
-    private DBCollection getCollection(String collection) {
+    public DBCollection getCollection(String collection) {
         return database.getCollection(collection);
     }
 
@@ -68,7 +68,6 @@ public class Mongo {
         DBCursor cursor = getCollection(collection).find();
 
         try {
-            //ToDo: Cambiar JSON a GSON para que no esté deprecated
             while(cursor.hasNext()) users.add(gson.fromJson(JSON.serialize(cursor), User.class));
         } finally {
             cursor.close();
@@ -87,16 +86,5 @@ public class Mongo {
             cursor.close();
         }
         throw new NoDocumentException(uuid);
-    }
-
-    public boolean updateDocument(String uuid, String collection , PunishLevel pl) throws NoCollectionException {
-        if (getCollection(collection) == null) throw new NoCollectionException(collection);
-        int level = pl.getLevel() > PunishLevel.BANEADO.getLevel() ? PunishLevel.BANEADO.getLevel() : pl.getLevel();
-        BasicDBObject query = new BasicDBObject().append("UUID", uuid);
-        BasicDBObject newLevel = new BasicDBObject();
-        newLevel.append("$set", new BasicDBObject().append("level", level));
-
-        getCollection(collection).update(query, newLevel);
-        return true;
     }
 }
