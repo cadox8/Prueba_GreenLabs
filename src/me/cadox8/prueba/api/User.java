@@ -7,7 +7,10 @@ import me.cadox8.prueba.exc.NoCollectionException;
 import me.cadox8.prueba.utils.Mongo;
 import me.cadox8.prueba.utils.PunishLevel;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class User {
@@ -32,15 +35,29 @@ public class User {
     public int getPunishLevel() {
         return pl.getLevel();
     }
+    public String getName() {
+        return getPlayer().getName();
+    }
 
-    public boolean updateDocument(String collection , PunishLevel pl) throws NoCollectionException {
+    public boolean updateDocument(String collection , PunishLevel pl, Player p) throws NoCollectionException {
         if (mongo.getCollection(collection) == null) throw new NoCollectionException(collection);
         int level = pl.getLevel() > PunishLevel.BANEADO.getLevel() ? PunishLevel.BANEADO.getLevel() : pl.getLevel();
         BasicDBObject query = new BasicDBObject().append("UUID", uuid);
         BasicDBObject newLevel = new BasicDBObject();
         newLevel.append("$set", new BasicDBObject().append("level", level));
 
+        Sancion s = new Sancion(this, p);
+
         mongo.getCollection(collection).update(query, newLevel);
         return true;
+    }
+
+    public List<Sancion> getHistory(String collection) throws NoCollectionException {
+        if (mongo.getCollection(collection) == null) throw new NoCollectionException(collection);
+        List<Sancion> sanciones = new ArrayList<>();
+
+
+
+        return sanciones;
     }
 }
