@@ -2,8 +2,9 @@ package me.cadox8.prueba.events;
 
 import me.cadox8.prueba.Prueba;
 import me.cadox8.prueba.api.User;
+import me.cadox8.prueba.exc.NoCollectionException;
 import me.cadox8.prueba.gui.GUI;
-import me.cadox8.prueba.gui.UserGUI;
+import me.cadox8.prueba.utils.PunishLevel;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,20 +50,36 @@ public class InvEvent implements Listener {
                         for (User u : Prueba.getUsers()) if (u.getUuid().equals(sm.getOwningPlayer().getUniqueId())) user = u;
 
                         p.closeInventory();
-                        if (user != null) new UserGUI(user, p).open();
+                        if (user != null) {
+                            if (GUI.playerData.containsKey(p)) GUI.playerData.remove(p);
+                            GUI.playerData.put(p, user);
+                        }
                         break;
                 }
                 break;
             case "Sancionar":
                 e.setCancelled(true);
-
+                p.playSound(p.getLocation(), Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
                 switch (e.getSlot()) {
-                    case 8:
+                    case 0:
                         p.closeInventory();
                         new GUI().openGUI(p, GUI.playerPage.get(p));
+                        if (GUI.playerData.containsKey(p)) GUI.playerData.remove(p);
                         break;
+                    case 8:
+                        p.closeInventory();
+                        if (GUI.playerData.containsKey(p)) GUI.playerData.remove(p);
+                        break;
+                    case 5:
+                        User u = GUI.playerData.get(p);
+                        try {
+                            u.updateDocument("punish", PunishLevel.next(u.getPl()), p);
+                        } catch (NoCollectionException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                        break;
+
                     default:
-                        p.playSound(p.getLocation(), Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
                         break;
                 }
 

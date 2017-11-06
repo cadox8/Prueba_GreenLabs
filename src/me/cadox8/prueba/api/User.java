@@ -1,5 +1,6 @@
 package me.cadox8.prueba.api;
 
+import com.google.gson.GsonBuilder;
 import com.mongodb.BasicDBObject;
 import lombok.Getter;
 import me.cadox8.prueba.Prueba;
@@ -10,23 +11,26 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+public final class User {
 
      private final Mongo mongo = Prueba.getInstance().getMongo();
 
     @Getter private UUID uuid;
-    private PunishLevel pl;
+    @Getter private PunishLevel pl;
+    private List<Sancion> sancion;
 
-    public User(String uuid, PunishLevel pl) {
-        this(UUID.fromString(uuid), pl);
+    public User(String uuid, PunishLevel pl, Sancion... sancion) {
+        this(UUID.fromString(uuid), pl, sancion);
     }
 
-    public User(UUID uuid, PunishLevel pl) {
+    public User(UUID uuid, PunishLevel pl, Sancion... sancion) {
         this.uuid = uuid;
         this.pl = pl;
+        this.sancion = Arrays.asList(sancion);
     }
 
     public OfflinePlayer getPlayer() {
@@ -38,6 +42,10 @@ public class User {
     public String getName() {
         return getPlayer().getName();
     }
+    public Sancion getSancion(int id) {
+        if (id > sancion.size()) return null;
+        return sancion.get(id);
+    }
 
     public boolean updateDocument(String collection , PunishLevel pl, Player p) throws NoCollectionException {
         if (mongo.getCollection(collection) == null) throw new NoCollectionException(collection);
@@ -46,7 +54,8 @@ public class User {
         BasicDBObject newLevel = new BasicDBObject();
         newLevel.append("$set", new BasicDBObject().append("level", level));
 
-        Sancion s = new Sancion(this, p);
+        BasicDBObject newSan = new BasicDBObject();
+        newSan.append(pl.getLevel() + "", new GsonBuilder().create().toJson(new Sancion(this, p.getName())));
 
         mongo.getCollection(collection).update(query, newLevel);
         return true;

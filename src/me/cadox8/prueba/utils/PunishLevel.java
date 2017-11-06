@@ -11,4 +11,12 @@ public enum PunishLevel {
     BANEADO(2);
 
     @Getter private int level;
+
+
+    public static PunishLevel next(PunishLevel pl) {
+        for (PunishLevel p : PunishLevel.values()) {
+            if (p.getLevel() > pl.getLevel()) return p;
+        }
+        return BANEADO;
+    }
 }

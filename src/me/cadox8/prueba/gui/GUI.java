@@ -1,6 +1,7 @@
 package me.cadox8.prueba.gui;
 
 import me.cadox8.prueba.Prueba;
+import me.cadox8.prueba.api.User;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ public class GUI {
     private final Prueba plugin = Prueba.getInstance();
 
     public static HashMap<Player, Integer> playerPage = new HashMap<>();
+    public static HashMap<Player, User> playerData = new HashMap<>();
 
     public void openGUI(Player p, int page){
         Inventory inv = plugin.getServer().createInventory(null, 54, "Sanciones");
