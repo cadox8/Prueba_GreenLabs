@@ -2,6 +2,8 @@ package me.cadox8.prueba.api;
 
 import com.google.gson.GsonBuilder;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.util.JSON;
 import lombok.Getter;
 import me.cadox8.prueba.Prueba;
 import me.cadox8.prueba.exc.NoCollectionException;
@@ -47,9 +49,10 @@ public final class User {
         return sancion.get(id);
     }
 
-    public boolean updateDocument(String collection , PunishLevel pl, Player p) throws NoCollectionException {
+    public boolean updateDocument(String collection , PunishLevel plNew, Player p) throws NoCollectionException {
         if (mongo.getCollection(collection) == null) throw new NoCollectionException(collection);
-        int level = pl.getLevel() > PunishLevel.BANEADO.getLevel() ? PunishLevel.BANEADO.getLevel() : pl.getLevel();
+        if (pl.getLevel() >= PunishLevel.BANEADO.getLevel()) return false;
+        int level = plNew.getLevel() > PunishLevel.BANEADO.getLevel() ? PunishLevel.BANEADO.getLevel() : plNew.getLevel();
         BasicDBObject query = new BasicDBObject().append("UUID", uuid);
         BasicDBObject newLevel = new BasicDBObject();
         newLevel.append("$set", new BasicDBObject().append("level", level));
@@ -65,8 +68,14 @@ public final class User {
         if (mongo.getCollection(collection) == null) throw new NoCollectionException(collection);
         List<Sancion> sanciones = new ArrayList<>();
 
+        Arrays.asList(PunishLevel.values()).forEach(g -> {
+            BasicDBObject allQuery = new BasicDBObject();
+            BasicDBObject fields = new BasicDBObject();
+            fields.put(g.getLevel() + "", g.getLevel());
+            DBCursor cursor = mongo.getCollection(collection).find(allQuery, fields);
 
-
+            while (cursor.hasNext()) sanciones.add(new GsonBuilder().create().fromJson(JSON.serialize(cursor), Sancion.class));
+        });
         return sanciones;
     }
 }

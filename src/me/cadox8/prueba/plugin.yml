@@ -1,4 +1,0 @@
-name: ${project.artifactId}
-main: me.cadox8.prueba.Prueba
-version: ${project.version}
-author: Cadox8

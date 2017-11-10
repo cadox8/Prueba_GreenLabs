@@ -3,6 +3,7 @@ package me.cadox8.prueba;
 import com.mongodb.DB;
 import lombok.Getter;
 import me.cadox8.prueba.api.User;
+import me.cadox8.prueba.cmd.HistoryCMD;
 import me.cadox8.prueba.events.InvEvent;
 import me.cadox8.prueba.exc.NoCollectionException;
 import me.cadox8.prueba.utils.Mongo;
@@ -36,6 +37,7 @@ public class Prueba extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, ()-> updateUsers(), 0, 40);
 
         getServer().getPluginManager().registerEvents(new InvEvent(this), this);
+        getCommand("historial").setExecutor(new HistoryCMD());
     }
 
     public void updateUsers() {
