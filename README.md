@@ -1,5 +1,9 @@
 # Prueba GreenLabs
 
+Pequeño proyecto que se me pidió como prueba para acceder al equipo de desarrollo de GreenLab (antiguo Minplay), que nunca fue utilizado.
+
+No está probado, por lo que su funcionamiento es desconocido, además de que (creo) está inacabado.
+
 ### Información
 
 Toda la información obtenida para hacer el plugin (documentación de MongoDB)
